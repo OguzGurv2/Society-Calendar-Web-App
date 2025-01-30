@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <script src="script/index.js"></script>
+    <link rel="stylesheet" href="style/index.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="addEvent">
+        <header>
+            <i class="fa-solid fa-xmark close"></i>
+        </header>
+        <form>
+            <input type="text" name="title" id="title" placeholder="Add title...">
+            <textarea name="description" id="description" placeholder="Please write a short description"></textarea>
+            <input type="text" name="location" id="location" placeholder="Add location...">
+            <label for="Date">Date:</label>
+            <input type="date" name="date" id="date">
+            <label for="start">Start Time:</label>
+            <input type="time" name="start" id="start">
+            <label for="end">End Time:</label>
+            <input type="time" name="end" id="end">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="darken-background"></div>
+    <div id="calendar"></div>
+</body>
+</html>

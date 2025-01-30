@@ -1,0 +1,79 @@
+.darken-background{
+    z-index: 998;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.close::before {
+    cursor: pointer;
+}
+
+#calendar {
+    height: 95vh;
+    z-index: 0;
+}
+
+#addEvent {
+    display: none;
+    flex-direction: column;
+    z-index: 999;
+    position: absolute;
+    background-color: white;
+    width: fit-content;
+    height: fit-content;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    align-items: center;
+    justify-content: center;
+}
+
+#addEvent > header {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    margin: 10px;
+}
+
+#addEvent > header > .close::before {
+    position: absolute;
+    right: 10px;
+}
+
+#addEvent > form {
+    margin: 10px;
+    padding-left: 5px;
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: 100%;
+}
+
+#addEvent > form > input, 
+#addEvent > form > textarea {
+    margin: 2.5px 0px 2.5px 0px;    
+}
+
+#addEvent > form > #title {
+    margin: 5px 0px 2.5px 0px;    
+}
+
+.custom-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8); 
+    color: white;                          
+    padding: 5px 10px;
+    border-radius: 5px;                    
+    font-size: 12px;
+    display: none;                         
+    z-index: 1000;                         
+    white-space: nowrap;                   
+    max-width: 200px;                      
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);  
+}
+
