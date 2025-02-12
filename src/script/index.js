@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const darkenBackground = document.querySelector(".darken-background");
 
-    class AddEventMenu {
+    // Event Creation Menu Class
+    class EventCreationMenu {
         constructor(node) {
             this.node = node;
             this.closeBtn = this.node.querySelector(".close");
@@ -34,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData(e.target);
                 const data = Object.fromEntries(formData.entries());
         
+                // Post Event with /addEvent endpoint
                 try {
                     const response = await fetch('/addEvent', {
                         method: "POST",
@@ -45,10 +47,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     const event = await response.json();
                     calendar.addEvent({
                         title: event.title,
-                        start: `${event.date} T${event.start}:00`,
+                        start: `${event.date} T${event.start}:00`, // formatting start & end time into DATETIME
                         end: `${event.date} T${event.end}:00`,
                         allDay: false,
-                        extendedProps: {
+                        extendedProps: {    // calendar doesn't have description or location as a default prop
                             description: event.description,
                             location: event.location
                         }
@@ -62,7 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
     }
 
-    async function getAllEvents() {
+    // gets all the events from backend
+    async function getAllEvents() { // this function is for testing for now
         try {
           const response = await fetch("/events");
           if (!response.ok) {
@@ -92,9 +95,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // executes event creation menu
     const eventPopup = document.querySelector('#addEvent');
-    const eventMenu = new AddEventMenu(eventPopup);
+    const eventMenu = new EventCreationMenu(eventPopup);
 
+    // executes calendar element
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
         headerToolbar: {
@@ -119,7 +124,9 @@ document.addEventListener('DOMContentLoaded', function() {
             minute: '2-digit',
             meridiem: 'short'
         },
-        eventDidMount: function(info) {
+        // this is a custom tooltip that shows location and description of an event
+        // I'm planning to change this with a pop-up which works for mobile as well
+        eventDidMount: function(info) {     
             let tooltip = document.createElement("div");
             tooltip.className = "custom-tooltip";
 
@@ -148,8 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 tooltip.style.display = "none";  
             });
         },
-        
-        // events: events
     });
 
     calendar.render();
