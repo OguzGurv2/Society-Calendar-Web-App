@@ -154,10 +154,11 @@
 
 .event-details > button {
     margin-bottom: 5px;
+    display: none;
 }
 
 .event-details > button.active {
-    display: none;
+    display: block;
 }
 
 .event-details > .delete-btn {

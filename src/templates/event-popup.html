@@ -1,8 +1,8 @@
 <template>
     <div class="event-popup">
-        <header>
-            <h1 class="title">Event Title</h1>
-            <i class="fa-solid fa-xmark close"></i>
+        <header id="header">
+            <h1 id="headerTitle">Event Title</h1>
+            <i class="fa-solid fa-xmark close-btn"></i>
         </header>
         <form class="event-details">
             <input type="text" name="title" id="title" disabled required>
@@ -22,10 +22,10 @@
                 <input type="text" name="town" id="town" placeholder="town" disabled>
                 <input type="text" name="postcode" id="postcode" placeholder="postcode" maxlength="7" minlength="7" disabled>
             </div>
-            <button class="edit-btn">Edit</button>
-            <button class="save-btn active">Save</button>
-            <button class="cancel-btn active">Cancel</button>
-            <button class="delete-btn">Delete</button>
+            <button class="edit-btn active">Edit</button>
+            <button class="save-btn">Save</button>
+            <button class="cancel-btn">Cancel</button>
+            <button class="delete-btn active">Delete</button>
         </form>
     </div>
 </template>
