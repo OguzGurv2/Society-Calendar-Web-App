@@ -5,29 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar</title>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-    <script src="script/index.js"></script>
+    <script type="module" src="static/index.js"></script>
     <link rel="stylesheet" href="style/index.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div id="addEvent">
+    <div id="addEvent" class="event-popup">
         <header>
+            <h1 class="title">Create new event</h1>
             <i class="fa-solid fa-xmark close"></i>
         </header>
-        <form>
-            <input type="text" name="title" id="title" placeholder="Add title...">
-            <textarea name="description" id="description" placeholder="Please write a short description"></textarea>
-            <input type="text" name="location" id="location" placeholder="Add location...">
-            <label for="Date">Date:</label>
-            <input type="date" name="date" id="date">
-            <label for="start">Start Time:</label>
-            <input type="time" name="start" id="start">
-            <label for="end">End Time:</label>
-            <input type="time" name="end" id="end">
-            <input type="submit" value="Submit">
+        <form class="event-details">
+            <input type="text" name="title" id="title" placeholder="Add title..." required>
+            <textarea name="event_des" id="event_des" placeholder="Please write a short description"></textarea>
+            <input type="date" name="event_date" id="event_date" min="" required>
+            <div class="event-time">
+                <input type="time" name="event_start" id="event_start" min="" required>
+                <p>-</p>
+                <input type="time" name="event_end" id="event_end" min="" required>
+            </div>
+            <div class="onlineContainer">
+                <p>Location:</p>
+                <div>
+                    <p>Online</p>
+                    <input type="checkbox" name="is_online" id="is_online">
+                </div>
+            </div>
+            <div class="addressContainer">
+                <input type="text" name="address_1" id="address_1" placeholder="address line 1">
+                <input type="text" name="address_2" id="address_2" placeholder="address line 2">
+                <input type="text" name="town" id="town" placeholder="town">
+                <input type="text" name="postcode" id="postcode" placeholder="postcode" maxlength="7" minlength="7">
+            </div>
+            <input title="click to submit" type="submit" value="Submit">
         </form>
     </div>
-    <div class="darken-background"></div>
     <div id="calendar"></div>
 </body>
 </html>

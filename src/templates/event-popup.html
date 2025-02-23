@@ -1,0 +1,31 @@
+<template>
+    <div class="event-popup">
+        <header>
+            <h1 class="title">Event Title</h1>
+            <i class="fa-solid fa-xmark close"></i>
+        </header>
+        <form class="event-details">
+            <input type="text" name="title" id="title" disabled required>
+            <textarea name="event_description" id="event_description" disabled></textarea>
+            <input type="date" name="event_date" id="event_date" disabled required>
+            <div class="event-time">
+                <input type="time" name="event_start" id="event_start" disabled required>
+                <p>-</p>
+                <input type="time" name="event_end" id="event_end" disabled required>
+            </div>
+            <div>
+                <input type="checkbox" name="is_online" id="is_online" disabled>
+            </div>
+            <div class="addressContainer">
+                <input type="text" name="address_1" id="address_1" placeholder="address line 1" disabled>
+                <input type="text" name="address_2" id="address_2" placeholder="address line 2" disabled>
+                <input type="text" name="town" id="town" placeholder="town" disabled>
+                <input type="text" name="postcode" id="postcode" placeholder="postcode" maxlength="7" minlength="7" disabled>
+            </div>
+            <button class="edit-btn">Edit</button>
+            <button class="save-btn active">Save</button>
+            <button class="cancel-btn active">Cancel</button>
+            <button class="delete-btn">Delete</button>
+        </form>
+    </div>
+</template>
