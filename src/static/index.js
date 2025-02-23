@@ -24,6 +24,8 @@ async function getAllEvents() {
     }
 }
 
+const eventCreationMenu = new EventCreationMenu(document.querySelector("#addEvent"));
+
 function initializeCalendar(events) {
     const calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
@@ -36,7 +38,7 @@ function initializeCalendar(events) {
         customButtons: {
             addEventButton: {
                 text: 'Add Event',
-                click: () => new EventCreationMenu().openMenu()
+                click: () => eventCreationMenu.openMenu()
             }
         },
         initialView: 'dayGridWeek',

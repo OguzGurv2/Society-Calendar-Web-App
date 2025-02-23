@@ -103,15 +103,13 @@ export class PopupManager {
 
         const formData = new FormData(this.node.querySelector(".event-details"));
         const data = Object.fromEntries(formData.entries());
-        data.event_status = "Scheduled";
-        data.event_id = this.node.dataset.id;
+        const updatedEvent = { ...data, event_status: "Scheduled", event_id: this.node.dataset.id };
 
-        debugger;
-        if (!this.validateDateAndTime(data) || !this.validateLocation(data)) {
+        if (!this.validateDateAndTime(updatedEvent) || !this.validateLocation(updatedEvent)) {
             return;
         }
 
-        this.data = await this.updateEvent(data);
+        this.data = await this.updateEvent(updatedEvent);
         updateEventOnCalendar(this.data);
         this.toggleEditMode(event, false);
     }
@@ -119,7 +117,7 @@ export class PopupManager {
     async deleteEvent() {
         this.clearValidation();
         const updatedEvent = { ...this.data, event_status: "Canceled" };
-        await updateEventOnCalendar(updatedEvent);
+        updateEventOnCalendar(updatedEvent);
         await this.updateEvent(updatedEvent);
     }
 
@@ -139,7 +137,6 @@ export class PopupManager {
     }
 
     validateDateAndTime(data) {
-        debugger;
         const { event_date: eventDate, event_start: eventStart, event_end: eventEnd } = data;
         const now = new Date();
         const todayStr = now.toISOString().split("T")[0];

@@ -3,6 +3,7 @@ import { addEventToCalendar } from "./index.js";
 // Event Creation Menu Class
 export class EventCreationMenu {
     constructor(node) {
+        debugger;
         this.node = node;
         this.isOnlineCheckbox = this.node.querySelector("#is_online");
         this.locationForm = this.node.querySelector(".addressContainer");
