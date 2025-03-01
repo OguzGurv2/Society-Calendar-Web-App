@@ -1,8 +1,9 @@
-import { EventCreationMenu } from './eventCreationClass.js';
-import { PopupManager } from './popupManagerClass.js';
+import { EventCreationMenu } from './eventCreation.js';
+import { PopupManager } from './popupManager.js';
 
 let calendar = null;
 
+// Initialize calendar, fetch events and load popup template
 document.addEventListener('DOMContentLoaded', async function () {
     try {
         await PopupManager.loadPopupTemplate();
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 });
 
+// Fetch all events from the server
 async function getAllEvents() {
     try {
         const response = await fetch("/events");
@@ -24,8 +26,10 @@ async function getAllEvents() {
     }
 }
 
+// Create event creation menu
 const eventCreationMenu = new EventCreationMenu(document.querySelector("#addEvent"));
 
+// Initialize calendar with events
 function initializeCalendar(events) {
     const calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
@@ -38,7 +42,7 @@ function initializeCalendar(events) {
         customButtons: {
             addEventButton: {
                 text: 'Add Event',
-                click: () => eventCreationMenu.openMenu()
+                click: () => eventCreationMenu.open()
             }
         },
         initialView: 'dayGridWeek',
@@ -50,11 +54,13 @@ function initializeCalendar(events) {
     calendar.render();
 }
 
+// Handle event click on calendar
 function handleEventClick(info) {
     const popup = PopupManager.list.find(popup => popup.node.dataset.id === info.event.id);
     if (popup) popup.open(info.el);
 }
 
+// Add event to calendar and create a popup for it
 export function addEventToCalendar(event) {
     if (!calendar) return;
     
@@ -69,6 +75,7 @@ export function addEventToCalendar(event) {
     });    
 }
 
+// Update event on calendar
 export function updateEventOnCalendar(updatedEvent) {
     if (!calendar) return;
     
@@ -83,6 +90,7 @@ export function updateEventOnCalendar(updatedEvent) {
     calendarEvent.setEnd(`${updatedEvent.event_date}T${updatedEvent.event_end}:00`);
 }
 
+// Remove event from calendar
 function sanitizeEvent(event) {
     const sanitizedEvent = {};
     Object.keys(event).forEach(key => {

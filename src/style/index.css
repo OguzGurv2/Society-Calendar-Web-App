@@ -1,6 +1,4 @@
-.close::before {
-    cursor: pointer;
-}
+/* FullCalendar Styling */
 
 #calendar {
     height: 95vh;
@@ -8,85 +6,47 @@
 }
 
 .fc-event:hover {
-    background-color: rgba(188, 232, 241, .3) !important;
-    cursor: pointer;
-}
-  
-.fc-event.active,
-.fc-event.active:hover {
-    background-color: rgba(188, 232, 241, .6) !important;
+    background-color: rgba(188, 232, 241, 0.3) !important;
     cursor: pointer;
 }
 
-.event-popup {
-    display: none;
-    flex-direction: column;
-    z-index: 999;
-    position: absolute;
-    background-color: white;
-    width: max-content;
-    height: fit-content;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0px 0px 5px gray;
-    align-items: flex-start;
-    border: 0;
-    border-radius: 5px;
-    padding: 0px 5px 0px 5px;
+.fc-event.active,
+.fc-event.active:hover {
+    background-color: rgba(188, 232, 241, 0.6) !important;
+    cursor: pointer;
 }
+
+/* Add Event Form */
 
 #addEvent {
     max-width: 300px;
     width: 250px;
 }
 
-.event-popup > header {
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    margin: 10px;
-    height: 25px;
-    margin-left: 0;
-    margin-right: 0;
-    background-color: #2c3e50;
-    color: #fff;
-    border: 0;
-    border-radius: 5px;
-    cursor: grab;
-    display: flex;
-    justify-content: space-between;
-}
-
 #addEvent > header {
     cursor: initial;
-}
-
-.event-popup > header.active {
-    cursor: grabbing;
-}
-
-.event-popup > header > h1 {
-    margin: 0;
-    font-size: 20px;
-    padding-left: 5px;
-}
-
-.event-popup > header > i {
-    align-self: center;
-    padding-right: 5px;
-}
-
-.event-popup > .event-details {
-    display: flex;
-    flex-direction: column;
 }
 
 #addEvent > .event-details {
     align-items: center;
     width: 100%;
+}
+
+#addEvent > .event-details > input[type="date"] {
+    width: fit-content;
+}
+
+.event-details > button {
+    margin-bottom: 5px;
+    display: none;
+}
+
+.event-details > button.active {
+    display: block;
+}
+
+.event-details > .delete-btn {
+    margin-bottom: 10px;
 }
 
 .event-details > p {
@@ -103,18 +63,10 @@
     width: 95%;
 }
 
-#addEvent > .event-details > input[type="date"] {
-    width: fit-content;
-}
-
-.event-details > div > input.blank {
-    display: none;
-}
-
 .event-details > .event-time {
     display: flex;
-    justify-content: space-evenly;  
-    width: 100%;  
+    justify-content: space-evenly;
+    width: 100%;
 }
 
 .event-details > .event-time > p {
@@ -152,15 +104,60 @@
     margin-bottom: 5px;
 }
 
-.event-details > button {
-    margin-bottom: 5px;
+/* Event Popup */
+
+.event-popup {
     display: none;
+    flex-direction: column;
+    position: absolute;
+    background-color: white;
+    width: max-content;
+    height: fit-content;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 5px gray;
+    border: 0;
+    border-radius: 5px;
+    padding: 0 5px;
+    z-index: 999;
 }
 
-.event-details > button.active {
-    display: block;
+.event-popup > header {
+    width: 100%;
+    height: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    background-color: #2c3e50;
+    color: #fff;
+    border: 0;
+    border-radius: 5px;
+    cursor: grab;
 }
 
-.event-details > .delete-btn {
-    margin-bottom: 10px;
+.event-popup > header.active {
+    cursor: grabbing;
+}
+
+.event-popup > header > h1 {
+    margin: 0;
+    font-size: 20px;
+    padding-left: 5px;
+}
+
+.event-popup > header > i {
+    padding-right: 5px;
+}
+
+.event-popup > .event-details {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Buttons */
+
+.close-btn::before {
+    cursor: pointer;
 }

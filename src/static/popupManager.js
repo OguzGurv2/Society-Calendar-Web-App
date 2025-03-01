@@ -4,6 +4,7 @@ export class PopupManager {
     static list = [];
     static popupTemplate = null;
 
+    // Load popup template from file
     static async loadPopupTemplate() {
         try {
             const response = await fetch("/templates/event-popup.html");
@@ -17,11 +18,13 @@ export class PopupManager {
         }
     }
 
+    // Set z-index for selected popup and others
     static setZIndex(selectedEl) {
         PopupManager.list.forEach(el => el.node.style.zIndex = 1);
         selectedEl.style.zIndex = 999;
     }
 
+    // Create new popup for event
     constructor(event) {
         this.data = { ...event };
         this.template = PopupManager.popupTemplate;
@@ -39,6 +42,7 @@ export class PopupManager {
         PopupManager.list.push(this);
     }
 
+    // Bind popup elements
     bindElements() {
         const buttons = ["close", "edit", "save", "cancel", "delete"];
         buttons.forEach(id => this[`${id}Btn`] = this.node.querySelector(`.${id}-btn`));
@@ -50,6 +54,7 @@ export class PopupManager {
         this.locationForm = this.node.querySelector(".addressContainer");
     }
 
+    // Populate event data in popup
     populateData() {
         const fields = ["title", "event_description", "event_date", "event_start", "event_end"];
         fields.forEach(field => this[`${field}El`].value = this.data[field] || "");
@@ -59,10 +64,12 @@ export class PopupManager {
         this.toggleLocationForm();
     }
 
+    // Toggle location form based on online status
     toggleLocationForm() {
         if (this.is_onlineEl.checked) {
             this.locationForm.classList.add("online");
         } else {
+            this.locationForm.classList.remove("online");
             ["address_1", "address_2", "town", "postcode"].forEach(field => {
                 const input = this.node.querySelector(`#${field}`);
                 if (input) input.value = this.data[field] || "";
@@ -70,6 +77,7 @@ export class PopupManager {
         }
     }
 
+    // Attach event listeners to popup buttons
     attachEventListeners() {
         this.closeBtn.addEventListener("click", () => this.close());
         this.editBtn.addEventListener("click", (e) => this.toggleEditMode(e, true));
@@ -77,26 +85,31 @@ export class PopupManager {
         this.cancelBtn.addEventListener("click", (e) => this.toggleEditMode(e, false));
         this.deleteBtn.addEventListener("click", async () => await this.deleteEvent());
         this.headerEl.addEventListener("mousedown", (e) => this.startDrag(e));
+        this.is_onlineEl.addEventListener("change", () => this.toggleLocationForm());
     }
 
+    // Open popup
     open(element) {
         this.element = element;
         document.body.appendChild(this.node);
         PopupManager.setZIndex(this.node);
         this.node.style.display = "flex";
     }
-
+    
+    // Close popup
     close() {
         this.node.style.display = "none";
         this.element?.classList.remove("active");
     }
 
+    // Toggle edit mode for event details
     toggleEditMode(event, editable) {
         event.preventDefault();
         this.node.querySelectorAll("input, textarea").forEach(input => input.disabled = !editable);
         ["edit", "save", "cancel"].forEach(btn => this[`${btn}Btn`].classList.toggle("active", btn !== "edit" ? editable : !editable));
     }
 
+    // Save changes to event
     async saveChanges(event) {
         event.preventDefault();
         this.clearValidation();
@@ -114,13 +127,19 @@ export class PopupManager {
         this.toggleEditMode(event, false);
     }
 
+    // Delete event from calendar, database and from DOM
     async deleteEvent() {
         this.clearValidation();
+
         const updatedEvent = { ...this.data, event_status: "Canceled" };
-        updateEventOnCalendar(updatedEvent);
         await this.updateEvent(updatedEvent);
+ 
+        PopupManager.list = PopupManager.list.filter(instance => instance !== this);
+        updateEventOnCalendar(updatedEvent);
+        this.node.remove();
     }
 
+    // Update event in database
     async updateEvent(data) {
         try {
             const response = await fetch("/updateEvent", {
@@ -136,6 +155,7 @@ export class PopupManager {
         }
     }
 
+    // Validate Date and Time Inputs
     validateDateAndTime(data) {
         const { event_date: eventDate, event_start: eventStart, event_end: eventEnd } = data;
         const now = new Date();
@@ -163,6 +183,7 @@ export class PopupManager {
         return true;
     }
 
+    // Validate Location Input
     validateLocation(data) {
         const isOnline = data.is_online === "on";
         
@@ -179,12 +200,14 @@ export class PopupManager {
         return true;
     }
 
+    // Clear validation messages
     clearValidation() {
         this.node.querySelectorAll("input, textarea").forEach((input) => {
             input.setCustomValidity("");
         });
     }
 
+    // Start dragging popup
     startDrag(event) {
         if (event.target.classList.contains("close")) return;
         this.isDragging = true;
@@ -198,12 +221,14 @@ export class PopupManager {
         document.addEventListener("mouseup", this.onMouseUp);
     }
 
+    // Move popup with mouse
     onMouseMove = (event) => {
         if (!this.isDragging) return;
         this.node.style.left = `${this.startLeft + event.clientX - this.startX}px`;
         this.node.style.top = `${this.startTop + event.clientY - this.startY}px`;
     };
 
+    // Stop dragging when mouse is released
     onMouseUp = () => {
         this.isDragging = false;
         document.removeEventListener("mousemove", this.onMouseMove);

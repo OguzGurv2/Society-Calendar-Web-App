@@ -5,110 +5,73 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
+// Load environment variables(port number) from .env file
 dotenv.config();
 
+// Define __dirname for ES module compatibility
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "src")));
 
+// Serve homepage
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "src", "index.html"));
 });
 
-app.post("/addEvent", async (req, res) => {
+// Fetch All Events
+async function getEvents(req, res) {
     try {
-        const {
-            title,
-            event_description,
-            event_date,
-            event_start,
-            event_end,
-            is_online,
-            address_1,
-            address_2,
-            town,
-            postcode,
-        } = req.body;
-
-        const isOnlineValue = is_online === "on" ? 1 : 0;
-
-        const newEvent = {
-            title,
-            event_description,
-            event_date,
-            event_start,
-            event_end,
-            is_online: isOnlineValue,
-            address_1,
-            address_2,
-            town,
-            postcode,
-        };
-
-        const newEventWithID = await db.addEvent(newEvent);
-
-        res.status(200).json(newEventWithID);
+        const events = await db.getAllEvents();
+        res.status(200).json(events);
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetching events:", error);
         res.status(500).json({ message: "Server error" });
     }
-});
+}
 
-app.post("/updateEvent", async (req, res) => {
+// Add Event
+async function addEvent(req, res) {
     try {
-        const {
-            event_id,
-            title,
-            event_description,
-            event_date,
-            event_start,
-            event_end,
-            is_online,
-            address_1,
-            address_2,
-            town,
-            postcode,
-            event_status
-        } = req.body;
+        const { is_online, ...eventDetails } = req.body;
+        const isOnline = is_online === "on" ? 1 : 0;
 
-        const isOnlineValue = is_online === "true" ? 1 : 0;
+        const newEvent = { ...eventDetails, is_online: isOnline };
+        const savedEvent = await db.addEvent(newEvent);
 
-        const updatedEvent = {
-            event_id,
-            title,
-            event_description,
-            event_date,
-            event_start,
-            event_end,
-            is_online: isOnlineValue,
-            address_1,
-            address_2,
-            town,
-            postcode,
-            event_status
-        };
+        res.status(200).json(savedEvent);
+    } catch (error) {
+        console.error("Error adding event:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
 
+// Update Event
+async function updateEvent(req, res) {
+    try {
+        const { is_online, ...eventDetails } = req.body;
+        const isOnline = is_online === "true" ? 1 : 0;
+
+        const updatedEvent = { ...eventDetails, is_online: isOnline };
         await db.updateEvent(updatedEvent);
+
         res.status(200).json(updatedEvent);
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error updating event:", error);
         res.status(500).json({ message: "Server error" });
     }
-});
+}
 
-app.get("/events", async (req, res) => {
-    res.status(200).json(await db.getAllEvents());
-});
+// Endpoints
+app.get("/events", getEvents);
+app.post("/addEvent", addEvent);
+app.post("/updateEvent", updateEvent);
 
-app.listen(PORT, (error) => {
-    if (!error) {
-        console.log(`Server is running at: http://localhost:${PORT}`);
-    } else {
-        console.log("Error occurred, server can't start", error);
-    }
-});
+// Start Server
+app.listen(PORT, () => console.log(`Server running at: http://localhost:${PORT}`));
