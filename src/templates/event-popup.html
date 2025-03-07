@@ -5,23 +5,31 @@
             <i class="fa-solid fa-xmark close-btn"></i>
         </header>
         <form class="event-details">
-            <input type="text" name="title" id="title" disabled required>
+            <input type="text" name="event_name" id="event_name" disabled required>
             <textarea name="event_description" id="event_description" disabled></textarea>
-            <input type="date" name="event_date" id="event_date" disabled required>
-            <div class="event-time">
+            <div class="event-date-time">
+                <input type="date" name="event_date" id="event_date" disabled required>
                 <input type="time" name="event_start" id="event_start" disabled required>
-                <p>-</p>
                 <input type="time" name="event_end" id="event_end" disabled required>
             </div>
-            <div>
-                <input type="checkbox" name="is_online" id="is_online" disabled>
+            <div class="onlineContainer">
+                <p>Location:</p>
+                <label for="is_online" class="online-checkbox">
+                    Online:
+                    <input type="checkbox" name="is_online" id="is_online" disabled>
+                    <span></span> 
+                </label>
             </div>
             <div class="addressContainer">
-                <input type="text" name="address_1" id="address_1" placeholder="address line 1" disabled>
-                <input type="text" name="address_2" id="address_2" placeholder="address line 2" disabled>
-                <input type="text" name="town" id="town" placeholder="town" disabled>
-                <input type="text" name="postcode" id="postcode" placeholder="postcode" maxlength="7" minlength="7" disabled>
+                <input type="text" name="event_address" id="event_address" placeholder="Address line" disabled>
+                <input type="text" name="town" id="town" placeholder="Town" disabled>
+                <input type="text" name="postcode" id="postcode" placeholder="Postcode" maxlength="7" minlength="7" disabled>
             </div>
+            <ul class="link-list"></ul>
+            <button id="add-link" class="addLink-btn">
+                <i class="fa-solid fa-plus"></i>
+                Add link
+            </button>
             <button class="edit-btn active">Edit</button>
             <button class="save-btn">Save</button>
             <button class="cancel-btn">Cancel</button>

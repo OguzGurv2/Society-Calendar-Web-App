@@ -1,15 +1,10 @@
 /* FullCalendar Styling */
-
 #calendar {
     height: 95vh;
     z-index: 0;
 }
 
-.fc-event:hover {
-    background-color: rgba(188, 232, 241, 0.3) !important;
-    cursor: pointer;
-}
-
+.fc-event:hover,
 .fc-event.active,
 .fc-event.active:hover {
     background-color: rgba(188, 232, 241, 0.6) !important;
@@ -17,23 +12,120 @@
 }
 
 /* Add Event Form */
-
-#addEvent {
-    max-width: 300px;
-    width: 250px;
+#addEvent,
+.event-popup {
+    max-width: 450px;
+    width: 400px;
+    align-items: center;
 }
 
-#addEvent > header {
+#addEvent > header,
+.event-popup > header {
     cursor: initial;
+    padding: 5px 0px;
 }
 
-#addEvent > .event-details {
+#addEvent > header > h1,
+.event-popup > header h1 {
+    padding-left: 10px;
+}
+
+.event-details {
     align-items: center;
     width: 100%;
 }
 
-#addEvent > .event-details > input[type="date"] {
+.event-details  input {
+    height: 2em;
+}
+
+.event-details > input[type="date"] {
     width: fit-content;
+}
+
+.event-details > input,
+.event-details > textarea,
+.event-details > .addressContainer > input {
+    width: 95%;
+    margin-bottom: 5%;
+}
+
+.event-details > input,
+.event-details > textarea,
+.event-details > .addressContainer > input,
+.event-details > .event-date-time > input,
+.event-details > .link-list > li > div > input {
+    font-size: 1em;
+    font-family: 'Times New Roman', Times, serif;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0px 5px;
+}
+
+.event-details > .event-date-time {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.event-details > .event-date-time > input[type="date"] {
+    width: 100px;
+}
+
+.event-details > .event-date-time > input[type="time"] {
+    width: 70px;
+}
+
+.event-details > input[type="submit"],
+.event-details > button {
+    font-size: 1.1em;
+    padding: 5px 0px;
+    background-color: #2c3e50;
+    color: #f0f0f0;
+    cursor: pointer;
+}
+
+.event-details > input[type="submit"]:hover,
+.event-details > button:hover {
+    background-color: #1e2b37;
+}
+
+.online-checkbox {
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.online-checkbox input {
+    display: none;
+}
+
+.online-checkbox span {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    border: 2px solid #2c3e50;
+    border-radius: 4px;
+    margin: 0 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.online-checkbox input:checked + span::after {
+    content: '✔';
+    font-size: 16px;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.online-checkbox input:checked + span {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
 }
 
 .event-details > button {
@@ -49,7 +141,8 @@
     margin-bottom: 10px;
 }
 
-.event-details > p {
+.event-details > p,
+.event-details > .event-time > p {
     margin: 0;
 }
 
@@ -57,61 +150,102 @@
     padding-bottom: 5px;
 }
 
-.event-details > input,
-.event-details > textarea {
-    margin-bottom: 5px;
-    width: 95%;
-}
-
-.event-details > .event-time {
-    display: flex;
-    justify-content: space-evenly;
-    width: 100%;
-}
-
-.event-details > .event-time > p {
-    margin: 0;
-}
-
-.event-details > .onlineContainer {
-    display: flex;
-    justify-content: space-between;
-    width: 95%;
-}
-
-.event-details > .onlineContainer p,
-.event-details > .onlineContainer input {
-    padding: 0;
-    margin: 0;
-}
-
-.event-details > .onlineContainer > div {
-    display: flex;
-}
-
+.event-details > .onlineContainer,
 .event-details > .addressContainer {
     display: flex;
     flex-direction: column;
-    position: relative;
     width: 95%;
 }
 
-.event-details > .addressContainer.online {
-    display: none;
+.event-details > .onlineContainer {
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-.addressContainer > input {
-    margin-bottom: 5px;
+.event-details > .addressContainer {
+    transition: max-height 300ms ease-in-out, opacity 300ms ease-in-out;
+    max-height: 500px; 
+    opacity: 1;
+    overflow: hidden;
+    padding: 0;
+}
+
+.event-details > .addressContainer.online {
+    max-height: 0px;
+    opacity: 0;
+}
+
+.event-details > .link-list,
+.event-details > .link-list > li {
+    display: flex;
+    justify-content: center;
+}
+
+.event-details > .link-list {
+    margin: 0;
+    padding: 0;
+    width: 95%;
+    list-style: none;
+    margin-bottom: 5%;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-details > .link-list > li {
+    width: 100%;
+    padding-bottom: 2.5%;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-details > .link-list > li > div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.event-details > .link-list > li > div > input {
+    width: 40%;
+}
+
+.event-details > .link-list > li button {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #2c3e50;
+    color: #f0f0f0;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+
+.event-details > #add-link {
+    width: fit-content;
+    padding: 5px 10px;
+    display: none;
+    align-self: flex-start;
+    margin-left: 2.5%;
+}
+
+.event-details > #add-link.active {
+    display: block;
+}
+
+.event-details > #add-link:hover,
+.event-details > .link-list > li > button:hover {
+    background-color: #1e2b37;
+}
+
+.event-details > .link-list > li  i {
+    font-size: 1.25em;
+    color: #f0f0f0;
 }
 
 /* Event Popup */
-
 .event-popup {
     display: none;
     flex-direction: column;
     position: absolute;
     background-color: white;
-    width: max-content;
     height: fit-content;
     left: 50%;
     top: 50%;
@@ -132,12 +266,11 @@
     margin: 10px 0;
     background-color: #2c3e50;
     color: #fff;
-    border: 0;
     border-radius: 5px;
     cursor: grab;
 }
 
-.event-popup > header.active {
+.event-popup > header.dragging {
     cursor: grabbing;
 }
 
@@ -156,8 +289,95 @@
     flex-direction: column;
 }
 
-/* Buttons */
+.event-popup > .event-details > button {
+    border: 0;
+    border-radius: 8px;
+    width: 100%;
+    font-family: 'Times New Roman', Times, serif;
+}
 
 .close-btn::before {
     cursor: pointer;
+}
+
+.link-list > li > a.hidden, 
+.remove-link.hidden,
+input.hidden {
+    display: none;
+}  
+
+/* Mobile */
+@media (max-width: 768px) {
+    #calendar {
+        height: 94vh;
+    }
+
+    .fc-header-toolbar {
+        margin-bottom: 10px !important;
+    }
+
+    .fc-toolbar-title {
+        font-size: 20px !important;
+    }
+
+    .fc-button {
+        font-size: 12.5px !important;
+    }
+
+    #addEvent,
+    .event-popup {
+        height: 100vh;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .event-popup > header,
+    .event-details, 
+    #addEvent > header {
+        width: 92.5%;
+    }
+
+    .event-popup > header,
+    #addEvent > header {
+        height: fit-content;
+        margin: 15px 0;
+        padding: 10px 5px;
+        font-size: 1.5em;
+    }
+
+    .event-details > input {
+        height: 2em;
+    }
+
+    .event-details > textarea {
+        height: 6em;
+        padding-top: 5px;
+    }
+
+    .event-details > .event-date-time,
+    .event-details > .onlineContainer {
+        width: 100%;
+    }
+    
+    .event-details > input[type="submit"] {
+        width: 102.5%;
+        margin-bottom: 5%;
+    }
+
+    .event-details > .event-date-time > input {
+        padding: 5px;
+    }
+
+    .event-details > .onlineContainer > p,
+    .online-checkbox {
+        font-size: 1.1em;
+    }
+
+    .event-details > .addressContainer {
+        align-items: center;
+    }
+
+    .event-details > .addressContainer > input {
+       height: 2em;
+    }
 }

@@ -16,27 +16,31 @@
             <i class="fa-solid fa-xmark close-btn"></i>
         </header>
         <form class="event-details">
-            <input type="text" name="title" id="title" placeholder="Add title..." required>
+            <input type="text" name="event_name" id="event_name" maxlength="55" placeholder="Add title..." required>
             <textarea name="event_description" id="event_description" placeholder="Please write a short description"></textarea>
-            <input type="date" name="event_date" id="event_date" min="" required>
-            <div class="event-time">
+            <div class="event-date-time">
+                <input type="date" name="event_date" id="event_date" min="" required>
                 <input type="time" name="event_start" id="event_start" min="" required>
-                <p>-</p>
                 <input type="time" name="event_end" id="event_end" min="" required>
             </div>
             <div class="onlineContainer">
                 <p>Location:</p>
-                <div>
-                    <p>Online</p>
+                <label for="is_online" class="online-checkbox">
+                    Online:
                     <input type="checkbox" name="is_online" id="is_online">
-                </div>
+                    <span></span> 
+                </label>
             </div>
             <div class="addressContainer">
-                <input type="text" name="address_1" id="address_1" placeholder="address line 1">
-                <input type="text" name="address_2" id="address_2" placeholder="address line 2">
-                <input type="text" name="town" id="town" placeholder="town">
-                <input type="text" name="postcode" id="postcode" placeholder="postcode" maxlength="7" minlength="7">
+                <input type="text" name="event_address" id="event_address" placeholder="Address line">
+                <input type="text" name="town" id="town" placeholder="Town">
+                <input type="text" name="postcode" id="postcode" placeholder="Postcode" maxlength="7" minlength="7">
             </div>
+            <ul class="link-list"></ul>
+            <button id="add-link" class="addLink-btn active">
+                <i class="fa-solid fa-plus"></i>
+                Add link
+            </button>
             <input title="click to submit" type="submit" value="Submit">
         </form>
     </div>

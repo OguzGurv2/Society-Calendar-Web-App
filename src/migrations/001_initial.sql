@@ -14,22 +14,24 @@ CREATE TABLE IF NOT EXISTS society (
 -- Table: event
 CREATE TABLE IF NOT EXISTS event (
     event_id CHAR(36) PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    event_name VARCHAR(55) NOT NULL,
     event_description TEXT,
     event_date DATE NOT NULL,
     event_start CHAR(5) NOT NULL,
     event_end CHAR(5) NOT NULL,
-    event_status TEXT CHECK(event_status IN ('Scheduled', 'Completed' , 'Canceled')) NOT NULL
+    event_status TEXT CHECK(event_status IN ('Scheduled', 'Completed' , 'Canceled')) NOT NULL,
+    event_links TEXT,
+    society_id CHAR(36), 
+    FOREIGN KEY (society_id) REFERENCES society(society_id) ON DELETE CASCADE
 );
 
 -- Table: event_location 
 CREATE TABLE IF NOT EXISTS event_location (
-    event_id CHAR(36) PRIMARY KEY,  
-    is_online BOOLEAN,
-    address_1 VARCHAR(255),
-    address_2 VARCHAR(255),
-    town VARCHAR(255),
+    event_id CHAR(36) PRIMARY KEY, 
+    event_address VARCHAR(255),
     postcode CHAR(7),
+    town VARCHAR(50),
+    is_online BOOLEAN NOT NULL,
     FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE
 );
 
