@@ -1,6 +1,6 @@
 import { updateEventOnCalendar } from "./index.js";
 
-export class PopupManager {
+export class PopupEvent {
   static list = [];
   static popupTemplate = null;
 
@@ -12,7 +12,7 @@ export class PopupManager {
 
       const templateDiv = document.createElement("div");
       templateDiv.innerHTML = (await response.text()).trim();
-      PopupManager.popupTemplate = templateDiv.querySelector("template");
+      PopupEvent.popupTemplate = templateDiv.querySelector("template");
     } catch (error) {
       console.error(error);
     }
@@ -20,14 +20,14 @@ export class PopupManager {
 
   // Set z-index for selected popup and others
   static setZIndex(selectedEl) {
-    PopupManager.list.forEach((el) => (el.node.style.zIndex = 1));
+    PopupEvent.list.forEach((el) => (el.node.style.zIndex = 1));
     selectedEl.style.zIndex = 999;
   }
 
   // Create new popup for event
   constructor(event) {
     this.data = { ...event };
-    this.template = PopupManager.popupTemplate;
+    this.template = PopupEvent.popupTemplate;
     this.isDragging = false;
     this.linkCount = 0;
 
@@ -40,7 +40,7 @@ export class PopupManager {
     this.attachEventListeners();
 
     document.body.appendChild(this.node);
-    PopupManager.list.push(this);
+    PopupEvent.list.push(this);
   }
 
   // Bind popup elements
@@ -160,7 +160,7 @@ export class PopupManager {
   open(element) {
     this.element = element;
     document.body.appendChild(this.node);
-    PopupManager.setZIndex(this.node);
+    PopupEvent.setZIndex(this.node);
     this.node.style.display = "flex";
   }
 
@@ -281,7 +281,7 @@ export class PopupManager {
     const updatedEvent = { ...this.data, event_status: "Canceled" };
     await this.updateEvent(updatedEvent);
 
-    PopupManager.list = PopupManager.list.filter(
+    PopupEvent.list = PopupEvent.list.filter(
       (instance) => instance !== this
     );
     updateEventOnCalendar(updatedEvent);
@@ -381,7 +381,7 @@ export class PopupManager {
     this.startY = event.pageY;
     this.startLeft = this.node.offsetLeft;
     this.startTop = this.node.offsetTop;
-    PopupManager.setZIndex(this.node);
+    PopupEvent.setZIndex(this.node);
 
     document.addEventListener("mousemove", this.onMouseMove);
     document.addEventListener("mouseup", this.onMouseUp);

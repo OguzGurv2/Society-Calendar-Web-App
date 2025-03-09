@@ -306,7 +306,7 @@ input.hidden {
     display: none;
 }  
 
-/* Mobile */
+/* PC */
 @media (max-width: 768px) {
     #calendar {
         height: 94vh;

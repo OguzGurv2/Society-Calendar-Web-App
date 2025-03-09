@@ -1,22 +1,21 @@
 import { EventCreationMenu } from "./eventCreation.js";
-import { PopupManager } from "./popupManager.js";
+import { PopupEvent } from "./popupEvent.js";
 
-let calendar = null;
+let el = {};
 
 // Initialize calendar, fetch events and load popup template
 document.addEventListener("DOMContentLoaded", async function () {
   try {
-    await PopupManager.loadPopupTemplate();
+    el.userType = localStorage.getItem('user_type');
+    el.isMobile = window.innerWidth;
+    el.eventCreationMenu = new EventCreationMenu(
+      document.querySelector("#addEvent")
+    );
+    await PopupEvent.loadPopupTemplate();
+
     const events = await getAllEvents();
     initializeCalendar(events);
-    if (window.innerWidth < 768) {
-      calendar.changeView("dayGridMonth");
-      calendar.setOption("headerToolbar", {
-        start: "title",
-        center: "addEventButton",
-        end: "dayGridMonth,timeGridDay prev,next", // Your new toolbar options
-      });
-    }
+
   } catch (error) {
     console.error("Error initializing calendar:", error);
   }
@@ -34,25 +33,20 @@ async function getAllEvents() {
   }
 }
 
-// Create event creation menu
-const eventCreationMenu = new EventCreationMenu(
-  document.querySelector("#addEvent")
-);
-
 // Initialize calendar with events
 function initializeCalendar(events) {
   const calendarEl = document.getElementById("calendar");
-  calendar = new FullCalendar.Calendar(calendarEl, {
+  el.calendar = new FullCalendar.Calendar(calendarEl, {
     headerToolbar: {
       start: "title",
-      center: "addEventButton",
-      end: "dayGridMonth,dayGridWeek,timeGridDay prev,next",
+      center: (el.userType === 'student') ? "" : "addEventButton",
+      end: (el.isMobile <= 768) ? "dayGridMonth,timeGridDay prev,next" : "dayGridMonth,dayGridWeek,timeGridDay prev,next",
     },
     titleFormat: { year: "numeric", month: "short", day: "numeric" },
     customButtons: {
       addEventButton: {
         text: "Add Event",
-        click: () => eventCreationMenu.open(),
+        click: () => el.eventCreationMenu.open(),
       },
     },
     initialView: "dayGridWeek",
@@ -62,12 +56,12 @@ function initializeCalendar(events) {
   });
 
   events.forEach((event) => addEventToCalendar(event));
-  calendar.render();
+  el.calendar.render();
 }
 
 // Handle event click on calendar
 function handleEventClick(info) {
-  const popup = PopupManager.list.find(
+  const popup = PopupEvent.list.find(
     (popup) => popup.node.dataset.id === info.event.id
   );
   if (popup) popup.open(info.el);
@@ -75,11 +69,11 @@ function handleEventClick(info) {
 
 // Add event to calendar and create a popup for it
 export function addEventToCalendar(event) {
-  if (!calendar) return;
+  if (!el.calendar) return;
 
   const sanitizedEvent = sanitizeEvent(event);
-  new PopupManager(sanitizedEvent);
-  calendar.addEvent({
+  new PopupEvent(sanitizedEvent);
+  el.calendar.addEvent({
     id: sanitizedEvent.event_id,
     title: sanitizedEvent.event_name,
     start: `${sanitizedEvent.event_date}T${sanitizedEvent.event_start}:00`,
@@ -90,7 +84,7 @@ export function addEventToCalendar(event) {
 
 // Update event on calendar
 export function updateEventOnCalendar(updatedEvent) {
-  if (!calendar) return;
+  if (!el.calendar) return;
 
   const calendarEvent = calendar.getEventById(updatedEvent.event_id);
   if (!calendarEvent) {

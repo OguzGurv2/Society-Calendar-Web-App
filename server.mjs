@@ -4,6 +4,7 @@ import path from "path";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import bcrypt from 'bcrypt';
 
 // Load environment variables(port number) from .env file
 dotenv.config();
@@ -16,14 +17,47 @@ const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "src")));
+// Open Login Portal
+async function renderLoginPage(req, res) {
+  res.sendFile(path.join(__dirname, "src", "login.html"));
+}
 
-// Serve homepage
-app.get("/", (req, res) => {
+// Get User Details
+async function getUser(req, res) {
+  try {
+    const { email, password } = req.body;
+    let userData;
+    
+    if (email.endsWith('@upsu.net')) {
+      userData = await db.getSocietyUser(email);
+    } else {
+      userData = await db.getStudentUser(email);
+    }
+
+    if (!userData) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    const isPasswordValid = await bcrypt.compare(password, userData.society_password || userData.student_password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+    
+    res.status(200).json({ message: "Login successful", user: userData });
+    
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Server error" });
+  }  
+}
+
+async function logStudent(req, res) {
   res.sendFile(path.join(__dirname, "src", "index.html"));
-});
+}
+
+async function logSociety(req, res) {
+  res.sendFile(path.join(__dirname, "src", "index.html"));
+}
 
 // Fetch All Events
 async function getEvents(req, res) {
@@ -41,7 +75,7 @@ async function addEvent(req, res) {
   try {
     const { is_online, ...eventDetails } = req.body;
     const isOnline = is_online === "on" ? 1 : 0;
-
+    
     const newEvent = { ...eventDetails, is_online: isOnline };
     const savedEvent = await db.addEvent(newEvent);
 
@@ -68,10 +102,23 @@ async function updateEvent(req, res) {
   }
 }
 
+// Middleware
+app.use(express.json());
+
 // Endpoints
+app.get("/", renderLoginPage);
+app.post("/getUser", getUser);
+
+app.get("/u/st/:student_id", logStudent);
+app.get("/u/so/:society_id", logSociety);
+
 app.get("/events", getEvents);
 app.post("/addEvent", addEvent);
 app.post("/updateEvent", updateEvent);
+
+// AFTER routes, so it doesn't override "/"
+app.use(express.static(path.join(__dirname, "src")));
+app.use('/style', express.static(path.join(__dirname, 'src', 'style')));
 
 // Start Server
 app.listen(PORT, () =>

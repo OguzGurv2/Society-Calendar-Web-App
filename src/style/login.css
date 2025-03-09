@@ -1,0 +1,93 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    margin-top: 10%;
+    padding: 0% 5%;
+}
+
+h1 {
+    font-size: 4em;
+    padding-bottom: 2.5%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 750px;
+}
+
+
+
+form > input {
+    font-family: 'Times New Roman', Times, serif;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0px 5px;
+    margin-bottom: 5%;
+}
+
+form > input[type=text],
+form > input[type=password] {
+    height: 2.1em;
+    padding-left: 2.5%;
+}
+
+form > label {
+    margin-bottom: 2.5%;
+}
+
+form > input[type=submit] {
+    cursor: pointer;
+    padding: 3% 0%;
+    background-color: #2c3e50;
+    color: #fff;
+}
+
+form > input[type=submit]:hover {
+    background-color: #1e2b37;
+}
+
+form > input[type=submit]:disabled:hover,
+form > input[type=submit]:disabled {
+    cursor: not-allowed;
+    background-color: rgba(239, 239, 239, 0.3);
+    color: rgba(16, 16, 16, 0.3);
+}
+
+form > input,
+form > label  {
+    font-size: 3em;
+}
+
+/* PC */
+@media (min-width: 768px) {
+    
+    h1 {
+        font-size: 2.5em;
+    }
+    
+    form > input,
+    form > label {
+        font-size: 1.5em;
+    }
+    
+    form > input[type=text],
+    form > input[type=password] {
+        height: 1.6em;
+    }
+
+    form > input[type=submit] {
+        padding: 7.5px 5px;
+    }
+
+}

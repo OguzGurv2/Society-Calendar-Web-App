@@ -27,6 +27,34 @@ async function init() {
 // Establish Connection
 const dbConn = init();
 
+// Get Society User Details
+export async function getSocietyUser(email) {
+  const db = await dbConn;
+  try {
+    return await db.get(
+      `SELECT * FROM society WHERE society_email = ?`,
+      [email]
+    );
+  } catch (error) {
+    console.error("Error fetching Society User:", error);
+    throw error;
+  }
+}
+
+// Get Student User Details
+export async function getStudentUser(email) {
+  const db = await dbConn;
+  try {
+    return await db.get(
+      `SELECT * FROM student WHERE student_email = ?`,
+      [email]
+    );
+  } catch (error) {
+    console.error("Error fetching Student User:", error);
+    throw error;
+  }
+}
+
 // Add Event
 export async function addEvent(event) {
   const db = await dbConn;
@@ -109,7 +137,7 @@ export async function getAllEvents() {
   const db = await dbConn;
 
   try {
-    return await db.all(
+    return await db.get(
       `SELECT 
                 e.event_id, e.event_name, e.event_description, e.event_date, e.event_start, e.event_end, e.event_links, 
                 el.is_online, el.event_address, el.town, el.postcode 
