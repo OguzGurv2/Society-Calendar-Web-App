@@ -73,10 +73,10 @@ async function getUserDetails(e) {
 
         if (userData.society_id) {
             localStorage.setItem('user_type', 'society')
-            window.location.href = `/u/so/${userData.society_id}`;  
+            window.location.href = `/so/${userData.society_id}`;  
         } else {
             localStorage.setItem('user_type', 'student')
-            window.location.href = `/u/st/${userData.student_id}`;  
+            window.location.href = `/st/${userData.student_id}`;  
         }
     
     } catch (error) {

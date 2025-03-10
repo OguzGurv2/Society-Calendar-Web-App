@@ -1,4 +1,4 @@
-import { updateEventOnCalendar } from "./index.js";
+import { el, updateEventOnCalendar } from "./index.js";
 
 export class PopupEvent {
   static list = [];
@@ -30,6 +30,7 @@ export class PopupEvent {
     this.template = PopupEvent.popupTemplate;
     this.isDragging = false;
     this.linkCount = 0;
+    this.userType = el.userType;
 
     const popupClone = this.template.content.cloneNode(true);
     this.node = popupClone.querySelector(".event-popup");
@@ -37,6 +38,7 @@ export class PopupEvent {
 
     this.bindElements();
     this.populateData();
+    this.handleButtons();
     this.attachEventListeners();
 
     document.body.appendChild(this.node);
@@ -93,6 +95,7 @@ export class PopupEvent {
     this.populateLinks();
   }
 
+  // Populate event links
   populateLinks() {
     // debugger;
     if (!this.data.event_links) return;
@@ -122,6 +125,14 @@ export class PopupEvent {
 
       this.node.querySelector("ul").append(linkInput);
     });
+  }
+
+  // Handles editing and deleting buttons depending on user type
+  handleButtons() {
+    if (this.userType === 'student') {
+      this.editBtn.classList.remove('active');
+      this.deleteBtn.classList.remove('active');
+    }
   }
 
   // Attach event listeners to popup buttons
@@ -189,6 +200,7 @@ export class PopupEvent {
       .forEach((text) => text.classList.toggle("hidden"));
   }
 
+  // Adds Link Inputs to the element
   addLinkInput(e) {
     e.preventDefault();
     this.linkCount++;
@@ -216,6 +228,7 @@ export class PopupEvent {
     if (this.linkCount == 3) return this.addLinkBtn.classList.remove("active");
   }
 
+  // Updating Links
   updateLinks() {
     this.linkList.querySelectorAll('li').forEach((linkNode) => {
         linkNode.querySelector('a').textContent = linkNode.querySelector("input[type=text]").value;
@@ -356,6 +369,7 @@ export class PopupEvent {
     return true;
   }
 
+  // Validate URL Names
   validateURLName(linkName, linkNameKey) {
     if (linkName === null) {
       this.node

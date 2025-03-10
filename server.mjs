@@ -51,10 +51,12 @@ async function getUser(req, res) {
   }  
 }
 
+// Logs Student User to the application
 async function logStudent(req, res) {
   res.sendFile(path.join(__dirname, "src", "index.html"));
 }
 
+// Logs Society User to the application
 async function logSociety(req, res) {
   res.sendFile(path.join(__dirname, "src", "index.html"));
 }
@@ -62,7 +64,14 @@ async function logSociety(req, res) {
 // Fetch All Events
 async function getEvents(req, res) {
   try {
-    const events = await db.getAllEvents();
+    const { userType, userId: id } = req.body;
+
+    let events;
+    if (userType == 'society') {
+      events = await db.getSocietyEvents(id);
+    } else {
+      events = await db.getStudentEvents(id);
+    }
     res.status(200).json(events);
   } catch (error) {
     console.error("Error fetching events:", error);
@@ -109,10 +118,10 @@ app.use(express.json());
 app.get("/", renderLoginPage);
 app.post("/getUser", getUser);
 
-app.get("/u/st/:student_id", logStudent);
-app.get("/u/so/:society_id", logSociety);
+app.get("/st/:student_id", logStudent);
+app.get("/so/:society_id", logSociety);
 
-app.get("/events", getEvents);
+app.post("/events", getEvents);
 app.post("/addEvent", addEvent);
 app.post("/updateEvent", updateEvent);
 

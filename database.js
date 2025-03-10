@@ -70,8 +70,8 @@ export async function addEvent(event) {
     const linksJSON = JSON.stringify(event.links);
 
     await db.run(
-      `INSERT INTO event (event_id, event_name, event_description, event_date, event_start, event_end, event_status, event_links)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO event (event_id, event_name, event_description, event_date, event_start, event_end, event_status, event_links, society_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         event.event_name,
@@ -81,6 +81,7 @@ export async function addEvent(event) {
         event.event_end,
         "Scheduled",
         linksJSON,
+        event.society_id
       ]
     );
 
@@ -132,19 +133,45 @@ export async function updateEvent(event) {
   }
 }
 
-// Fetch All Events
-export async function getAllEvents() {
+// Only Gets the User's(Society) Events
+export async function getSocietyEvents(society_id) {
   const db = await dbConn;
 
   try {
-    return await db.get(
+    return await db.all(
       `SELECT 
-                e.event_id, e.event_name, e.event_description, e.event_date, e.event_start, e.event_end, e.event_links, 
-                el.is_online, el.event_address, el.town, el.postcode 
-             FROM event e 
-             JOIN event_location el ON el.event_id = e.event_id 
-             WHERE event_status = ?`,
-      ["Scheduled"]
+          e.*, 
+          el.*
+        FROM society s
+        JOIN event e ON s.society_id = e.society_id
+        JOIN event_location el ON el.event_id = e.event_id 
+        WHERE s.society_id = ?`,
+      [society_id]
+    );
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    throw error;
+  }
+}
+
+// Gets User's(Student) Enrolled Society Events
+export async function getStudentEvents(student_id) {
+  const db = await dbConn;
+
+  try {
+    return await db.all(
+      `SELECT 
+          e.*,
+          el.*
+        FROM student s
+        JOIN student_society ss ON s.student_id = ss.student_id
+        JOIN society so ON ss.society_id = so.society_id
+        JOIN event e ON so.society_id = e.society_id  
+        JOIN event_location el ON e.event_id = el.event_id 
+        WHERE event_status = ?
+        AND ss.is_enrolled = ?
+        AND s.student_id = ?`,
+      ["Scheduled", 1, student_id]
     );
   } catch (error) {
     console.error("Error fetching events:", error);

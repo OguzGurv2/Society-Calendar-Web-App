@@ -1,19 +1,20 @@
 import { EventCreationMenu } from "./eventCreation.js";
 import { PopupEvent } from "./popupEvent.js";
 
-let el = {};
+export let el = {};
 
 // Initialize calendar, fetch events and load popup template
 document.addEventListener("DOMContentLoaded", async function () {
   try {
     el.userType = localStorage.getItem('user_type');
+    el.userId = el.userType === 'society' ? window.location.pathname.split('/so/')[1] : window.location.pathname.split('/st/')[1];
     el.isMobile = window.innerWidth;
     el.eventCreationMenu = new EventCreationMenu(
       document.querySelector("#addEvent")
     );
     await PopupEvent.loadPopupTemplate();
 
-    const events = await getAllEvents();
+    const events = await getEvents();
     initializeCalendar(events);
 
   } catch (error) {
@@ -22,11 +23,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 // Fetch all events from the server
-async function getAllEvents() {
+async function getEvents() {
   try {
-    const response = await fetch("/events");
-    if (!response.ok) throw new Error("Failed to fetch events");
-    return await response.json();
+    const response = await fetch("/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userType: el.userType, userId: el.userId }),
+    });
+
+    const data = await response.json();
+    console.log(data);
+    return data;
+
   } catch (error) {
     console.error("Error fetching events:", error);
     return [];

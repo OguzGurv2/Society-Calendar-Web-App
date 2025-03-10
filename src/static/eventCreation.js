@@ -1,4 +1,4 @@
-import { addEventToCalendar } from "./index.js";
+import { el, addEventToCalendar } from "./index.js";
 
 // Event Creation Menu Class
 export class EventCreationMenu {
@@ -6,6 +6,7 @@ export class EventCreationMenu {
     this.node = node;
     this.isOpen = false;
     this.linkCount = 0;
+    this.userId = el.userId;
 
     this.bindElements();
     this.attachEventListeners();
@@ -66,6 +67,7 @@ export class EventCreationMenu {
     this.locationForm.classList.toggle("online", this.isOnlineCheckbox.checked);
   }
 
+  // Add Link Inputs to the form
   addLinkInput(e) {
     e.preventDefault();
     this.linkCount++;
@@ -148,6 +150,7 @@ export class EventCreationMenu {
     return true;
   }
 
+  // Validate URL Names
   validateURLName(linkName, linkNameKey) {
     if (linkName === null) {
       console.log(linkNameKey);
@@ -199,6 +202,8 @@ export class EventCreationMenu {
       delete data[link];
       delete data[linkNameKey];
     }
+
+    data.society_id = this.userId;
 
     try {
       const response = await fetch("/addEvent", {

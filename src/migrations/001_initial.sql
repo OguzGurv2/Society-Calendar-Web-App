@@ -71,3 +71,9 @@ INSERT INTO student (student_id, student_up_number, student_email, student_passw
 ('3f3f243f-8b04-48de-ad03-905993aef80c', '2157400', 'up2157400@myport.ac.uk', '$2a$14$MxJczAsWHg1wg7ZcT.1LAOk071Wd1f4uOXJVnJWznq7TG.21qzaBG'),
 ('9632f3a5-b226-4a82-b5af-6f28593e63b6', '2015704', 'up2015704@myport.ac.uk', '$2a$14$2RYPdjrZczXVW3/qeV7yueCWyk4TuxvBJ3yHkLBV154GuhQpVhW6y'),
 ('2a9b9f1d-b490-4d95-b7b2-2de9bc8f900b', '2047743', 'up2047743@myport.ac.uk', '$2a$14$MoGRzsxR99bU5Micum.Mke2EDpPSwj0bHcaucctrqE/DTkXgEOGEi');
+
+INSERT INTO student_society (student_id, society_id, is_enrolled) VALUES
+('53b1aa3b-1482-45a0-a784-cf2b69e5ebf2', '550e8400-e29b-41d4-a716-446655440000', true),
+('53b1aa3b-1482-45a0-a784-cf2b69e5ebf2', 'c0a80102-65c3-4fd5-9e37-7b74b1c5a9e8', false),
+('53b1aa3b-1482-45a0-a784-cf2b69e5ebf2', '3d72b1a6-f2b6-4c0c-a034-3a54a9b6d26e', true),
+('53b1aa3b-1482-45a0-a784-cf2b69e5ebf2', 'a4b1c2d3-89e7-45f1-b8c9-112233445566', false);
