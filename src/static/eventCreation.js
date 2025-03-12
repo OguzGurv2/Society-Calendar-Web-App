@@ -141,8 +141,8 @@ export class EventCreationMenu {
 
   // Validate Location Input
   validateLocation(data) {
-    if (data.is_online !== "on" && !data.address_1) {
-      this.address_1Input.setCustomValidity(
+    if (data.is_online !== "on" && !data.event_address) {
+      this.event_addressInput.setCustomValidity(
         "Address is required for offline events."
       );
       return false;

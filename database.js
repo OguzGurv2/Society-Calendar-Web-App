@@ -64,7 +64,7 @@ export async function addEvent(event) {
     await db.run(
       `INSERT INTO event_location (event_id, is_online, event_address, town, postcode)
              VALUES (?, ?, ?, ?, ?)`,
-      [id, event.is_online, event.address_1, event.town, event.postcode]
+      [id, event.is_online, event.event_address, event.town, event.postcode]
     );
 
     const linksJSON = JSON.stringify(event.links);
@@ -103,7 +103,7 @@ export async function updateEvent(event) {
              WHERE event_id = ?`,
       [
         event.is_online,
-        event.address_1,
+        event.event_address,
         event.town,
         event.postcode,
         event.event_id,
@@ -140,6 +140,8 @@ export async function getSocietyEvents(society_id) {
   try {
     return await db.all(
       `SELECT 
+          s.society_name,
+          s.society_email,
           e.*, 
           el.*
         FROM society s
@@ -160,7 +162,9 @@ export async function getStudentEvents(student_id) {
 
   try {
     return await db.all(
-      `SELECT 
+      `SELECT
+          so.society_name,
+          so.society_email, 
           e.*,
           el.*
         FROM student s

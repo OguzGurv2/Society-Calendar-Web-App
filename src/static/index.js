@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     el.userType = localStorage.getItem('user_type');
     el.userId = el.userType === 'society' ? window.location.pathname.split('/so/')[1] : window.location.pathname.split('/st/')[1];
     el.isMobile = window.innerWidth;
+    el.importCalBtn = document.querySelector("#import-calendar");
     el.eventCreationMenu = new EventCreationMenu(
       document.querySelector("#addEvent")
     );
@@ -16,6 +17,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const events = await getEvents();
     initializeCalendar(events);
+    
+    el.importCalBtn.addEventListener("click", importCalendar);
 
   } catch (error) {
     console.error("Error initializing calendar:", error);
@@ -32,7 +35,6 @@ async function getEvents() {
     });
 
     const data = await response.json();
-    console.log(data);
     return data;
 
   } catch (error) {
@@ -87,20 +89,32 @@ export function addEventToCalendar(event) {
     start: `${sanitizedEvent.event_date}T${sanitizedEvent.event_start}:00`,
     end: `${sanitizedEvent.event_date}T${sanitizedEvent.event_end}:00`,
     allDay: false,
-  });
+    extendedProps: {
+      description: sanitizedEvent.event_description,
+      links: sanitizedEvent.event_links,
+      organizer: {
+        name: sanitizedEvent.society_name,
+        email: sanitizedEvent.society_email
+      },
+      location: sanitizedEvent.location
+    }
+  });  
 }
 
 // Update event on calendar
 export function updateEventOnCalendar(updatedEvent) {
   if (!el.calendar) return;
 
-  const calendarEvent = calendar.getEventById(updatedEvent.event_id);
+  const calendarEvent = el.calendar.getEventById(updatedEvent.event_id);
   if (!calendarEvent) {
     console.warn("Event not found in calendar:", updatedEvent);
     return;
   }
 
   calendarEvent.setProp("title", updatedEvent.event_name);
+  calendarEvent.setExtendedProp("description", updatedEvent.event_description);
+  calendarEvent.setExtendedProp("links", updatedEvent.event_links);
+  calendarEvent.setExtendedProp("location", updatedEvent.location);
   calendarEvent.setStart(
     `${updatedEvent.event_date}T${updatedEvent.event_start}:00`
   );
@@ -109,11 +123,69 @@ export function updateEventOnCalendar(updatedEvent) {
   );
 }
 
-// Remove event from calendar
+// Format and Sanitize Event 
 function sanitizeEvent(event) {
   const sanitizedEvent = {};
   Object.keys(event).forEach((key) => {
-    sanitizedEvent[key] = event[key] ?? ""; // Replace null/undefined with empty string
+    sanitizedEvent[key] = event[key] ?? ""; 
   });
+
+  if (sanitizedEvent.is_online === 0) {
+    sanitizedEvent.location = 
+    `${sanitizedEvent.event_address}, ${sanitizedEvent.town}, ${sanitizedEvent.postcode}`;
+  } else {
+    sanitizedEvent.location = "Online";
+  }
+
   return sanitizedEvent;
+}
+
+// Import Calendar with ics.js
+async function importCalendar() {
+  try {
+    el.events = [];
+    el.calendar.getEvents().forEach((event) => {
+      el.events.push({
+        title: event.title,
+        description: event.extendedProps.description,
+        location: event.extendedProps.location,
+        start: formatDateForICS(event.start),
+        end: formatDateForICS(event.end),
+        status: "CONFIRMED",
+        organizer: event.extendedProps.organizer
+      });
+    });
+
+    const response = await fetch("/downloadEvents", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ events: el.events }),
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'events.ics'; 
+      a.click(); 
+      window.URL.revokeObjectURL(url); 
+    } else {
+      console.error("Failed to download ICS file");
+    }
+
+  } catch (error) {
+    console.error("Error downloading events:", error);
+  }
+}
+
+function formatDateForICS(date) {
+  return [
+    date.getFullYear(),        // Year (YYYY)
+    date.getMonth() + 1,       // Month (1-based)
+    date.getDate(),            // Day
+    date.getHours(),           // Hours
+    date.getMinutes()          // Minutes
+];
 }

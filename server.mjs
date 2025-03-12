@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import bcrypt from 'bcrypt';
+import { createEvent} from 'ics'; 
 
 // Load environment variables(port number) from .env file
 dotenv.config();
@@ -111,6 +112,38 @@ async function updateEvent(req, res) {
   }
 }
 
+// Download Events as ICS
+async function downloadEvents(req, res) {
+  try {
+    const { events } = req.body;
+    const filename = 'ExampleEvent.ics';
+    const icsEvents = [];
+
+    await Promise.all(events.map(async (event) => {
+      return new Promise((resolve, reject) => {
+        createEvent(event, (error, value) => {
+          if (error) {
+            reject(error);
+          }
+          icsEvents.push(value);
+          resolve(); 
+        });
+      });
+    }));
+
+    const icsContent = icsEvents.join('\n'); 
+
+    res.setHeader('Content-Type', 'text/calendar');
+    res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+
+    res.send(icsContent);
+
+  } catch (error) {
+    console.error("Error generating ICS file:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
 // Middleware
 app.use(express.json());
 
@@ -124,6 +157,7 @@ app.get("/so/:society_id", logSociety);
 app.post("/events", getEvents);
 app.post("/addEvent", addEvent);
 app.post("/updateEvent", updateEvent);
+app.post("/downloadEvents", downloadEvents);
 
 // AFTER routes, so it doesn't override "/"
 app.use(express.static(path.join(__dirname, "src")));

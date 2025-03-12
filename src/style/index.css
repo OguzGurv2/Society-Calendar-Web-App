@@ -1,7 +1,6 @@
 /* FullCalendar Styling */
 #calendar {
-    height: 95vh;
-    z-index: 0;
+    height: 90vh;
 }
 
 .fc-event:hover,
@@ -9,6 +8,10 @@
 .fc-event.active:hover {
     background-color: rgba(188, 232, 241, 0.6) !important;
     cursor: pointer;
+}
+
+.fc-toolbar-title {
+    font-size: 20px !important;
 }
 
 /* Add Event Form */
@@ -207,7 +210,8 @@
     width: 40%;
 }
 
-.event-details > .link-list > li button {
+.event-details > .link-list > li button,
+#import-calendar {
     border: 0;
     border-radius: 8px;
     padding: 10px;
@@ -306,18 +310,15 @@ input.hidden {
     display: none;
 }  
 
+#import-calendar {
+    margin-top: 10px;
+}
+
 /* PC */
 @media (max-width: 768px) {
-    #calendar {
-        height: 94vh;
-    }
 
     .fc-header-toolbar {
         margin-bottom: 10px !important;
-    }
-
-    .fc-toolbar-title {
-        font-size: 20px !important;
     }
 
     .fc-button {

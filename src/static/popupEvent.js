@@ -82,7 +82,7 @@ export class PopupEvent {
     fields.forEach(
       (field) => (this[`${field}El`].value = this.data[field] || "")
     );
-    this.headerTitleEl.textContent = this.event_nameEl.value;
+    this.headerTitleEl.textContent = this.data.society_name;
 
     this.is_onlineEl.id = `is_online_${this.data.event_id}`;
     this.node
@@ -356,8 +356,8 @@ export class PopupEvent {
     const isOnline = data.is_online === "on";
 
     if (!isOnline) {
-      const addressInput = this.node.querySelector("[name='address_1']");
-      if (!data.address_1) {
+      const addressInput = this.node.querySelector("[name='event_address']");
+      if (!data.event_address) {
         addressInput.setCustomValidity(
           "Address is required for offline events."
         );
