@@ -116,7 +116,6 @@ async function updateEvent(req, res) {
 async function downloadEvents(req, res) {
   try {
     const { events } = req.body;
-    const filename = 'ExampleEvent.ics';
     const icsEvents = [];
 
     await Promise.all(events.map(async (event) => {
@@ -134,8 +133,6 @@ async function downloadEvents(req, res) {
     const icsContent = icsEvents.join('\n'); 
 
     res.setHeader('Content-Type', 'text/calendar');
-    res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
-
     res.send(icsContent);
 
   } catch (error) {

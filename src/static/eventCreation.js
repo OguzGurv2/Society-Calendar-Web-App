@@ -7,6 +7,7 @@ export class EventCreationMenu {
     this.isOpen = false;
     this.linkCount = 0;
     this.userId = el.userId;
+    this.is_online = false;
 
     this.bindElements();
     this.attachEventListeners();
@@ -53,7 +54,8 @@ export class EventCreationMenu {
     this.eventForm.reset();
     this.event_dateInput.value = new Date().toISOString().split("T")[0]; // Set today's date
     this.node.style.display = "flex";
-    this.toggleLocationContainer();
+    this.locationForm.classList.toggle("online", this.isOnlineCheckbox.checked);
+    this.is_online = false;
     this.isOpen = true;
   }
 
@@ -65,6 +67,7 @@ export class EventCreationMenu {
   // Toggle Location Form
   toggleLocationContainer() {
     this.locationForm.classList.toggle("online", this.isOnlineCheckbox.checked);
+    this.is_online = !this.is_online;
   }
 
   // Add Link Inputs to the form
@@ -150,6 +153,22 @@ export class EventCreationMenu {
     return true;
   }
 
+  // Check URL Inputs if exists
+  checkURLs(data) {
+    if (this.is_online) {
+      const links = Object.keys(data).filter(
+        (key) => key.startsWith("link_") && key.length == 6
+      );
+  
+      if (links.length === 0) {
+        alert("At least one link is required for online events.");
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   // Validate URL Names
   validateURLName(linkName, linkNameKey) {
     if (linkName === null) {
@@ -173,7 +192,8 @@ export class EventCreationMenu {
     if (
       !this.eventForm.checkValidity() ||
       !this.validateDateAndTime(data) ||
-      !this.validateLocation(data)
+      !this.validateLocation(data) ||
+      !this.checkURLs(data)
     ) {
       this.eventForm.reportValidity();
       return;

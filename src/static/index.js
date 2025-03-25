@@ -59,7 +59,7 @@ function initializeCalendar(events) {
         click: () => el.eventCreationMenu.open(),
       },
     },
-    initialView: "dayGridWeek",
+    initialView: (el.isMobile <= 768) ? "dayGridMonth" : "dayGridWeek",
     eventTimeFormat: { hour: "numeric", minute: "2-digit", meridiem: "short" },
     eventClick: handleEventClick,
     handleWindowResize: true,

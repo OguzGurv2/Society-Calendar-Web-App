@@ -31,6 +31,7 @@ export class PopupEvent {
     this.isDragging = false;
     this.linkCount = 0;
     this.userType = el.userType;
+    this.runOnce = false;
 
     const popupClone = this.template.content.cloneNode(true);
     this.node = popupClone.querySelector(".event-popup");
@@ -72,6 +73,14 @@ export class PopupEvent {
 
   // Populate event data in popup
   populateData() {
+    if (!this.runOnce) {
+      this.is_onlineEl.id = `is_online_${this.data.event_id}`;
+      this.node.querySelector("label[for='is_online']").setAttribute("for", this.is_onlineEl.id);
+    }
+
+    this.runOnce = true;
+    this.linkCount = 0;
+
     const fields = [
       "event_name",
       "event_description",
@@ -84,21 +93,18 @@ export class PopupEvent {
     );
     this.headerTitleEl.textContent = this.data.society_name;
 
-    this.is_onlineEl.id = `is_online_${this.data.event_id}`;
-    this.node
-      .querySelector("label[for='is_online']")
-      .setAttribute("for", this.is_onlineEl.id);
 
     this.is_onlineEl.checked = this.data.is_online === 1;
     this.toggleLocationForm();
-
+    this.is_online = this.data.is_online === 1;
+    
     this.populateLinks();
   }
 
   // Populate event links
   populateLinks() {
-    // debugger;
     if (!this.data.event_links) return;
+    this.node.querySelector("ul").innerHTML = "";
     const links = JSON.parse(this.data.event_links);
     Object.entries(links).forEach(([name, url]) => {
       this.linkCount++;
@@ -140,9 +146,10 @@ export class PopupEvent {
     this.closeBtn.addEventListener("click", () => this.close());
     this.editBtn.addEventListener("click", (e) => this.toggleEditMode(e, true));
     this.saveBtn.addEventListener("click", (e) => this.saveChanges(e));
-    this.cancelBtn.addEventListener("click", (e) =>
+    this.cancelBtn.addEventListener("click", (e) => {
       this.toggleEditMode(e, false)
-    );
+      this.populateData();
+    });
     this.deleteBtn.addEventListener(
       "click",
       async () => await this.deleteEvent()
@@ -165,6 +172,7 @@ export class PopupEvent {
         if (input) input.value = this.data[field] || "";
       });
     }
+    this.is_online = !this.is_online;
   }
 
   // Open popup
@@ -251,7 +259,8 @@ export class PopupEvent {
     if (
       !this.popupForm.checkValidity() ||
       !this.validateDateAndTime(updatedEvent) ||
-      !this.validateLocation(updatedEvent)
+      !this.validateLocation(updatedEvent) ||
+      !this.checkURLs(data)
     ) {
       this.popupForm.reportValidity();
       return;
@@ -366,6 +375,22 @@ export class PopupEvent {
         addressInput.setCustomValidity("");
       }
     }
+    return true;
+  }
+
+  // Check URL Inputs if exists
+  checkURLs(data) {
+    if (this.is_online) {
+      const links = Object.keys(data).filter(
+        (key) => key.startsWith("link_") && key.length == 6
+      );
+  
+      if (links.length === 0) {
+        alert("At least one link is required for online events.");
+        return false;
+      }
+    }
+
     return true;
   }
 
