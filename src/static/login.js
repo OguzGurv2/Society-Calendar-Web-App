@@ -1,6 +1,12 @@
 let el = {};
 
 document.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted) {
+            location.reload(); // Force a reload if the page was restored from the cache
+        }
+    });
+    
     bindElements();
     attachEventListeners();
 });
@@ -11,6 +17,7 @@ function bindElements() {
     el.passwordInput = document.querySelector('#password');
     el.submitButton = document.querySelector('input[type="submit"]');
     el.form = document.querySelector('form');
+    el.body = document.querySelector("body");
     el.isEmailValid = false;
     el.isPasswordValid = false;
 }
@@ -37,10 +44,37 @@ function updateSubmitButtonState() {
     el.submitButton.disabled = !(el.isEmailValid && el.isPasswordValid);
 }
 
+function handleLoading() {
+    // Check current cursor state
+    const isWait = el.body.style.cursor === "wait"; 
+    
+    // Toggle the body cursor
+    el.body.style.cursor = isWait ? "initial" : "wait";
+    
+    // Toggle disabled state for form elements
+    el.submitButton.disabled = !el.submitButton.disabled;
+    el.emailInput.disabled = !el.emailInput.disabled;
+    el.passwordInput.disabled = !el.passwordInput.disabled;
+
+    // Loop through all elements to toggle the cursor style
+    document.querySelectorAll("*").forEach(element => {
+        if (element.disabled) {
+            element.style.cursor = isWait ? "not-allowed" : "wait"; // Disabled elements
+        } else if (element.id === "email" || element.id === "password") {
+            element.style.cursor = isWait ? "text" : "wait"; // Specific input fields
+        } else {
+            element.style.cursor = isWait ? "initial" : "wait"; // Other elements
+        }
+    });
+
+    // Toggle the submit button text
+    el.submitButton.value = isWait ? "Login" : "Authenticating...";
+}
+
 // Get User Details
 async function getUserDetails(e) {
     e.preventDefault();
-
+    handleLoading();
 
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
@@ -57,12 +91,12 @@ async function getUserDetails(e) {
         if (response.status === 404) {
             console.error("User not found");
             alert("User not found. Please check your email.");
-            return;
+            return handleLoading();
         
         } else if (response.status === 401) {
             console.error("Invalid password");
             alert("Invalid password. Please try again.");
-            return;
+            return handleLoading();
         
         } else if (!response.ok) {
             throw new Error(`Server error: ${response.status}`);

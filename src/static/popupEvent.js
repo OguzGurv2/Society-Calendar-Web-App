@@ -48,8 +48,13 @@ export class PopupEvent {
 
   // Bind popup elements
   bindElements() {
-    const buttons = ["close", "edit", "save", "cancel", "delete", "addLink"];
-    buttons.forEach(
+    ["close", 
+      "edit", 
+      "save", 
+      "cancel", 
+      "delete", 
+      "addLink",
+    ].forEach(
       (id) => (this[`${id}Btn`] = this.node.querySelector(`.${id}-btn`))
     );
 

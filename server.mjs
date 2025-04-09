@@ -5,9 +5,10 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import bcrypt from 'bcrypt';
-import { createEvent} from 'ics'; 
+import { createEvent } from 'ics';
+import ngrok from 'ngrok'; // Added Ngrok
 
-// Load environment variables(port number) from .env file
+// Load environment variables
 dotenv.config();
 
 // Define __dirname for ES module compatibility
@@ -83,11 +84,12 @@ async function getEvents(req, res) {
 // Add Event
 async function addEvent(req, res) {
   try {
-    const { is_online, ...eventDetails } = req.body;
+    const { is_online, repeat_event, ...eventDetails } = req.body;
     const isOnline = is_online === "on" ? 1 : 0;
     
+    
     const newEvent = { ...eventDetails, is_online: isOnline };
-    const savedEvent = await db.addEvent(newEvent);
+    const savedEvent = repeat_event === "on" ? await db.addRecurringEvents(newEvent) : await db.addEvent(newEvent);
 
     res.status(200).json(savedEvent);
   } catch (error) {
@@ -161,6 +163,13 @@ app.use(express.static(path.join(__dirname, "src")));
 app.use('/style', express.static(path.join(__dirname, 'src', 'style')));
 
 // Start Server
-app.listen(PORT, () =>
-  console.log(`Server running at: http://localhost:${PORT}`)
-);
+app.listen(PORT, '0.0.0.0', async () => {
+  console.log(`Server running locally at: http://localhost:${PORT}`);
+
+  try {
+    const url = await ngrok.connect(PORT); // Start Ngrok
+    console.log(`Public HTTPS URL: ${url}`);
+  } catch (err) {
+    console.error("Error starting Ngrok:", err);
+  }
+});

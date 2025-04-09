@@ -31,10 +31,9 @@ const dbConn = init();
 export async function getSocietyUser(email) {
   const db = await dbConn;
   try {
-    return await db.get(
-      `SELECT * FROM society WHERE society_email = ?`,
-      [email]
-    );
+    return await db.get(`SELECT * FROM society WHERE society_email = ?`, [
+      email,
+    ]);
   } catch (error) {
     console.error("Error fetching Society User:", error);
     throw error;
@@ -45,10 +44,9 @@ export async function getSocietyUser(email) {
 export async function getStudentUser(email) {
   const db = await dbConn;
   try {
-    return await db.get(
-      `SELECT * FROM student WHERE student_email = ?`,
-      [email]
-    );
+    return await db.get(`SELECT * FROM student WHERE student_email = ?`, [
+      email,
+    ]);
   } catch (error) {
     console.error("Error fetching Student User:", error);
     throw error;
@@ -62,7 +60,13 @@ export async function addEvent(event) {
 
   try {
     await db.run(
-      `INSERT INTO event_location (event_id, is_online, event_address, town, postcode)
+      `INSERT INTO event_location (
+      event_id, 
+      is_online, 
+      event_address, 
+      town, 
+      postcode
+      )
              VALUES (?, ?, ?, ?, ?)`,
       [id, event.is_online, event.event_address, event.town, event.postcode]
     );
@@ -70,7 +74,17 @@ export async function addEvent(event) {
     const linksJSON = JSON.stringify(event.links);
 
     await db.run(
-      `INSERT INTO event (event_id, event_name, event_description, event_date, event_start, event_end, event_status, event_links, society_id)
+      `INSERT INTO event (
+      event_id, 
+      event_name, 
+      event_description, 
+      event_date, 
+      event_start, 
+      event_end, 
+      event_status, 
+      event_links, 
+      society_id
+      )
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
@@ -81,13 +95,101 @@ export async function addEvent(event) {
         event.event_end,
         "Scheduled",
         linksJSON,
-        event.society_id
+        event.society_id,
       ]
     );
 
     return { ...event, event_id: id };
   } catch (error) {
     console.error("Error adding event to DB:", error);
+    throw error;
+  }
+}
+
+export async function addRecurringEvents(event) {
+  const db = await dbConn;
+  const baseDate = new Date(event.event_date);
+  const year = baseDate.getFullYear();
+  const endDate = new Date(`${year}-06-27`);
+  const recurrenceDates = [];
+
+  // Get the weekday index (0 = Sun, 1 = Mon, ..., 6 = Sat)
+  const dayOfWeek = baseDate.getDay();
+
+  // Start from the base date and iterate weekly until June 27
+  for (
+    let date = new Date(baseDate);
+    date <= endDate;
+    date.setDate(date.getDate() + 7)
+  ) {
+    if (date.getDay() === dayOfWeek) {
+      recurrenceDates.push(new Date(date));
+    }
+  }
+
+  const insertedEvents = [];
+
+  try {
+    for (const date of recurrenceDates) {
+      const id = uuidv4();
+
+      const formattedDate = date.toISOString().split("T")[0]; // 'YYYY-MM-DD'
+      const linksJSON = JSON.stringify(event.links);
+
+      await db.run(
+        `INSERT INTO event_location (
+        event_id, 
+        is_online, 
+        event_address, 
+        town, 
+        postcode
+        )
+               VALUES (?, ?, ?, ?, ?)`,
+        [
+          id, 
+          event.is_online, 
+          event.event_address, 
+          event.town, 
+          event.postcode
+        ]
+      );
+
+      await db.run(
+        `INSERT INTO event (
+        event_id, 
+        event_name, 
+        event_description, 
+        event_date, 
+        event_start, 
+        event_end, 
+        event_status, 
+        event_links, 
+        society_id
+        )
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          id,
+          event.event_name,
+          event.event_description,
+          formattedDate,
+          event.event_start,
+          event.event_end,
+          "Scheduled",
+          linksJSON,
+          event.society_id,
+        ]
+      );
+
+      insertedEvents.push({
+        ...event,
+        event_date: formattedDate,
+        event_id: id,
+      });
+    }
+
+    return insertedEvents;
+  } catch (error) {
+    console.error("Error adding recurring events:", error);
     throw error;
   }
 }

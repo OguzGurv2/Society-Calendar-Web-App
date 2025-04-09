@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login Page</title>
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/login.css">
     <script src="static/login.js"></script>
 </head>
@@ -10,9 +11,9 @@
         <h1>Login</h1>
         <form>
             <label for="email">Email:</label>
-            <input type="text" id="email" name="email" required>
+            <input type="text" id="email" name="email" maxlength="255" required>
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" maxlength="60" required>
             <input type="submit" value="Login" disabled>
         </form>
     </div>

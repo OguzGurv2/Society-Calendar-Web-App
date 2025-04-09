@@ -17,12 +17,23 @@
             <i class="fa-solid fa-xmark close-btn"></i>
         </header>
         <form class="event-details">
-            <input type="text" name="event_name" id="event_name" maxlength="55" placeholder="Add title..." required>
+            <input type="text" name="event_name" id="event_name" maxlength="55" placeholder="Add title*" required>
             <textarea name="event_description" id="event_description" placeholder="Please write a short description"></textarea>
+            <p style="align-self: flex-start;">Date & Time:*</p>
             <div class="event-date-time">
                 <input type="date" name="event_date" id="event_date" min="" required>
-                <input type="time" name="event_start" id="event_start" min="" required>
-                <input type="time" name="event_end" id="event_end" min="" required>
+                <div class="time-container">
+                    <label for="event_start">Starts at:</label>
+                    <input type="time" name="event_start" id="event_start" min="" required>
+                </div>
+                <div class="time-container">
+                    <label for="event_start">Ends at:</label>
+                    <input type="time" name="event_end" id="event_end" min="" required>
+                </div>
+                <div class="repeat-event">
+                    <label for="repeat_event">Repeat Every </label>
+                    <input type="checkbox" name="repeat_event" id="repeat_event">
+                </div>
             </div>
             <div class="onlineContainer">
                 <p>Location:</p>
@@ -33,7 +44,7 @@
                 </label>
             </div>
             <div class="addressContainer">
-                <input type="text" name="event_address" id="event_address" placeholder="Address line">
+                <input type="text" name="event_address" id="event_address" placeholder="Address line*">
                 <input type="text" name="town" id="town" placeholder="Town">
                 <input type="text" name="postcode" id="postcode" placeholder="Postcode" maxlength="7" minlength="7">
             </div>
@@ -42,12 +53,21 @@
                 <i class="fa-solid fa-plus"></i>
                 Add link
             </button>
-            <input title="click to submit" type="submit" value="Submit">
+            <button id="add-event-submit" title="click to submit" type="submit">
+                Submit
+            </button>
         </form>
     </div>
+    <div id="share-menu" class="hidden">
+        <header>
+            <h1 class="title">Share Event!</h1>
+            <i class="fa-solid fa-xmark close-btn"></i>
+        </header>
+        <button>Share</button>
+    </div>
     <div id="calendar"></div>
-    <button id="import-calendar">
-        Import Calendar
+    <button id="export-calendar">
+        Export Calendar
     </button>
 </body>
 </html>

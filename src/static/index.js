@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     el.userType = localStorage.getItem('user_type');
     el.userId = el.userType === 'society' ? window.location.pathname.split('/so/')[1] : window.location.pathname.split('/st/')[1];
     el.isMobile = window.innerWidth;
-    el.importCalBtn = document.querySelector("#import-calendar");
+    el.exportCalBtn = document.querySelector("#export-calendar");
     el.eventCreationMenu = new EventCreationMenu(
       document.querySelector("#addEvent")
     );
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const events = await getEvents();
     initializeCalendar(events);
     
-    el.importCalBtn.addEventListener("click", importCalendar);
+    el.exportCalBtn.addEventListener("click", exportCalendar);
 
   } catch (error) {
     console.error("Error initializing calendar:", error);
@@ -83,6 +83,7 @@ export function addEventToCalendar(event) {
 
   const sanitizedEvent = sanitizeEvent(event);
   new PopupEvent(sanitizedEvent);
+
   el.calendar.addEvent({
     id: sanitizedEvent.event_id,
     title: sanitizedEvent.event_name,
@@ -140,8 +141,8 @@ function sanitizeEvent(event) {
   return sanitizedEvent;
 }
 
-// Import Calendar with ics.js
-async function importCalendar() {
+// export Calendar with ics.js
+async function exportCalendar() {
   try {
     el.events = [];
     el.calendar.getEvents().forEach((event) => {
@@ -182,10 +183,10 @@ async function importCalendar() {
 
 function formatDateForICS(date) {
   return [
-    date.getFullYear(),        // Year (YYYY)
-    date.getMonth() + 1,       // Month (1-based)
-    date.getDate(),            // Day
-    date.getHours(),           // Hours
-    date.getMinutes()          // Minutes
+    date.getFullYear(),        
+    date.getMonth() + 1,       
+    date.getDate(),            
+    date.getHours(),           
+    date.getMinutes()          
 ];
 }
