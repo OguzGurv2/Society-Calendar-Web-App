@@ -76,10 +76,11 @@ async function getUserDetails(e) {
     e.preventDefault();
     handleLoading();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
+    
     try {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
         const response = await fetch("/getUser", {
             method: "POST",
             headers: {
@@ -107,9 +108,12 @@ async function getUserDetails(e) {
 
         if (userData.society_id) {
             localStorage.setItem('user_type', 'society')
+            localStorage.setItem('user_name', userData.society_name);
+            localStorage.setItem('user_email', email);
             window.location.href = `/so/${userData.society_id}`;  
         } else {
             localStorage.setItem('user_type', 'student')
+            localStorage.setItem('user_email', email);
             window.location.href = `/st/${userData.student_id}`;  
         }
     

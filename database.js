@@ -99,7 +99,7 @@ export async function addEvent(event) {
       ]
     );
 
-    return { ...event, event_id: id };
+    return { ...event, event_id: id, event_links: linksJSON };
   } catch (error) {
     console.error("Error adding event to DB:", error);
     throw error;

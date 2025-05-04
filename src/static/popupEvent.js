@@ -104,6 +104,7 @@ export class PopupEvent {
     this.is_online = this.data.is_online === 1;
     
     this.populateLinks();
+    this.handleInputs();
   }
 
   // Populate event links
@@ -135,6 +136,14 @@ export class PopupEvent {
       });
 
       this.node.querySelector("ul").append(linkInput);
+    });
+  }
+
+  handleInputs() {
+    this.node.querySelectorAll("input, textarea").forEach((input) => {
+      if (input.value === "") {
+        input.classList.add("hidden");
+      } 
     });
   }
 
@@ -197,9 +206,23 @@ export class PopupEvent {
   // Toggle edit mode for event details
   toggleEditMode(e, editable) {
     e.preventDefault();
+
+    this.linkList
+    .querySelectorAll("a, input, button")
+    .forEach((text) => text.classList.toggle("hidden"));
+
     this.node
       .querySelectorAll("input, textarea")
-      .forEach((input) => (input.disabled = !editable));
+      .forEach((input) => {
+        input.disabled = !editable
+        if (input.id === "event_description") {
+          console.log(input);
+          input.classList.remove("hidden");
+        } else if (!this.is_online.checked && input.parentElement.classList.contains("addressContainer")) {
+          input.classList.remove("hidden");
+        }
+      });
+
     ["edit", "save", "cancel"].forEach((btn) =>
       this[`${btn}Btn`].classList.toggle(
         "active",
@@ -208,9 +231,7 @@ export class PopupEvent {
     );
     if (this.linkCount < 3) this.addLinkBtn.classList.toggle("active");
 
-    this.linkList
-      .querySelectorAll("a, input, button")
-      .forEach((text) => text.classList.toggle("hidden"));
+    if (!editable) this.handleInputs();
   }
 
   // Adds Link Inputs to the element

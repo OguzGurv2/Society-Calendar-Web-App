@@ -404,6 +404,10 @@ input.hidden {
     margin-top: 10px;
 }
 
+textarea.hidden {
+    display: none;
+}
+
 /* PC */
 @media (max-width: 768px) {
 

@@ -7,6 +7,9 @@ export let el = {};
 document.addEventListener("DOMContentLoaded", async function () {
   try {
     el.userType = localStorage.getItem('user_type');
+    if (el.userType === null) {
+      window.location.href = "/";
+    }
     el.userId = el.userType === 'society' ? window.location.pathname.split('/so/')[1] : window.location.pathname.split('/st/')[1];
     el.isMobile = window.innerWidth;
     el.exportCalBtn = document.querySelector("#export-calendar");
@@ -63,6 +66,12 @@ function initializeCalendar(events) {
     eventTimeFormat: { hour: "numeric", minute: "2-digit", meridiem: "short" },
     eventClick: handleEventClick,
     handleWindowResize: true,
+    dateClick: function(info) {
+      const currentView = el.calendar.view.type;
+      if (currentView !== "timeGridDay") {
+        el.calendar.changeView("timeGridDay", info.dateStr);
+      }
+    }
   });
 
   events.forEach((event) => addEventToCalendar(event));
@@ -81,7 +90,8 @@ function handleEventClick(info) {
 export function addEventToCalendar(event) {
   if (!el.calendar) return;
 
-  const sanitizedEvent = sanitizeEvent(event);
+  let sanitizedEvent = sanitizeEvent(event);
+  sanitizedEvent = {...sanitizedEvent, society_name: localStorage.getItem('user_name'), society_email: localStorage.getItem('user_email')};
   new PopupEvent(sanitizedEvent);
 
   el.calendar.addEvent({
@@ -145,16 +155,36 @@ function sanitizeEvent(event) {
 async function exportCalendar() {
   try {
     el.events = [];
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Ignore the time for current date comparison
+
     el.calendar.getEvents().forEach((event) => {
-      el.events.push({
-        title: event.title,
-        description: event.extendedProps.description,
-        location: event.extendedProps.location,
-        start: formatDateForICS(event.start),
-        end: formatDateForICS(event.end),
-        status: "CONFIRMED",
-        organizer: event.extendedProps.organizer
-      });
+      const eventStart = new Date(event.start);
+
+      // Only include events that are in the future
+      if (eventStart > currentDate) {
+        const organizer = event.extendedProps.organizer || { name: '', email: '' };
+
+        // Ensure description is not empty
+        const description = event.extendedProps.description.trim() === "" ? "No description" : event.extendedProps.description;
+
+        // Use formatDateForICS to convert dates into arrays
+        const startDate = formatDateForICS(event.start);
+        const endDate = formatDateForICS(event.end);
+
+        el.events.push({
+          title: event.title,
+          description: description,
+          location: event.extendedProps.location || '',
+          start: startDate,
+          end: endDate,
+          status: "CONFIRMED",
+          organizer: {
+            name: organizer.name || '',
+            email: organizer.email || ''
+          }
+        });
+      }
     });
 
     const response = await fetch("/downloadEvents", {
@@ -165,13 +195,13 @@ async function exportCalendar() {
 
     if (response.ok) {
       const blob = await response.blob();
-      
       const url = window.URL.createObjectURL(blob);
+
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'events.ics'; 
-      a.click(); 
-      window.URL.revokeObjectURL(url); 
+      a.download = 'events.ics';
+      a.click();
+      window.URL.revokeObjectURL(url);
     } else {
       console.error("Failed to download ICS file");
     }
@@ -183,10 +213,10 @@ async function exportCalendar() {
 
 function formatDateForICS(date) {
   return [
-    date.getFullYear(),        
-    date.getMonth() + 1,       
-    date.getDate(),            
-    date.getHours(),           
-    date.getMinutes()          
-];
+    date.getFullYear(),        // Year
+    date.getMonth() + 1,       // Month (1-based)
+    date.getDate(),            // Day
+    date.getHours(),           // Hours
+    date.getMinutes()          // Minutes
+  ];
 }
