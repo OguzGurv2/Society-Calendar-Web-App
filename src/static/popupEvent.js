@@ -139,6 +139,7 @@ export class PopupEvent {
     });
   }
 
+  // Handle empty inputs by adding hidden class
   handleInputs() {
     this.node.querySelectorAll("input, textarea").forEach((input) => {
       if (input.value === "") {

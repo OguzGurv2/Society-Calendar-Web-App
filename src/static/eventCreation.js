@@ -2,6 +2,7 @@ import { el, addEventToCalendar } from "./index.js";
 
 // Share Menu Class
 class ShareMenu {
+  // Constructor for the ShareMenu class
   constructor(node, eventCreationMenu) {
     this.node = node;
     this.eventCreationMenu = eventCreationMenu;
@@ -17,12 +18,14 @@ class ShareMenu {
     this.shareBtn.addEventListener("click", () => this.shareEvent());
   }
 
+  // Toggle on and off the share menu
   toggle() {
     this.node.style.display = this.node.style.display === "flex" ? "none" : "flex";
 
     this.isOpen = !this.isOpen;
   }
   
+  // Share the event using the Web Share API
   shareEvent() {
     const eventTitle = this.eventCreationMenu.eventForm.querySelector("#event_name").value;
     const eventDate = this.eventCreationMenu.event_dateInput.value; 
@@ -49,6 +52,7 @@ class ShareMenu {
     this.toggle();
   }
   
+  // Create the ICS file for sharing the event
   createICSFile(title, description, date, startTime, endTime) {
     const formatToICS = (dateString) => {
       return new Date(dateString).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
@@ -97,6 +101,7 @@ export class EventCreationMenu {
     this.attachEventListeners();
   }
 
+  // Bind elements to the class instance
   bindElements() {
     this.eventForm = this.node.querySelector("form");
     this.isOnlineCheckbox = this.node.querySelector("#is_online");
@@ -113,6 +118,7 @@ export class EventCreationMenu {
     this.handleRepetitionDay();
   }
 
+  // Attach event listeners to the elements
   attachEventListeners() {
     this.isOnlineCheckbox.addEventListener("change", () =>
       this.toggleLocationContainer()
@@ -132,6 +138,7 @@ export class EventCreationMenu {
     );
   }
 
+  // Open the event creation menu
   open() {
     if (this.isOpen) return;
     this.isOpen = true;
@@ -149,6 +156,7 @@ export class EventCreationMenu {
     this.node.style.display = "flex";
   }
 
+  // Close the event creation menu
   close() {
     this.node.style.display = "none";
     this.isOpen = false;
@@ -159,12 +167,14 @@ export class EventCreationMenu {
     this.eventForm.reset();
   }
 
+  // Toggle the location container based on the checkbox state
   toggleLocationContainer() {
     this.locationForm.classList.toggle("online", this.isOnlineCheckbox.checked);
     this.is_online = !this.is_online;
     this.linkCount === 0 ? this.addLinkBtn.click() : null;
   }
 
+  // Add a new link input field
   addLinkInput(e) {
     e.preventDefault();
     this.linkCount++;
@@ -190,12 +200,14 @@ export class EventCreationMenu {
     if (this.linkCount == 3) return this.addLinkBtn.classList.remove("active");
   }
 
+  // Handle the repetition day label
   handleRepetitionDay() {
     const date = new Date(this.event_dateInput.value || Date.now());
     this.dayName = date.toLocaleDateString("en-US", { weekday: "long" });
     this.eventRepetitionLabel.style.setProperty("--dayName", `"${this.dayName}"`);
   }
 
+  // Clear custom validity messages
   clearCustomValidity() {
     [
       this.event_dateInput,
@@ -205,6 +217,7 @@ export class EventCreationMenu {
     ].forEach((input) => input.setCustomValidity(""));
   }
 
+  // Validate date and time inputs
   validateDateAndTime(data) {
     const { event_date, event_start, event_end } = data;
     const now = new Date();
@@ -235,6 +248,7 @@ export class EventCreationMenu {
     return true;
   }
 
+  // Validate location inputs
   validateLocation(data) {
     if (data.is_online !== "on" && !data.event_address) {
       this.event_addressInput.setCustomValidity(
@@ -245,6 +259,7 @@ export class EventCreationMenu {
     return true;
   }
 
+  // Check if at least one URL is provided
   checkURLs(data) {
     if (this.is_online) {
       const links = Object.keys(data).filter(
@@ -259,6 +274,7 @@ export class EventCreationMenu {
     return true;
   }
 
+  // Validate URL name
   validateURLName(linkName, linkNameKey) {
     if (linkName === null) {
       this.node
@@ -269,6 +285,7 @@ export class EventCreationMenu {
     return true;
   }
 
+  // Handle the event form submission
   async handleEventForm(e) {
     e.preventDefault();
 
